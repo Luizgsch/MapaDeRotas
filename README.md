@@ -22,7 +22,23 @@ Interface React + Vite + Mapbox para visualização e roteamento sobre a malha p
 
 O script pós-build gera `dist/404.html` a partir de `index.html` (comportamento SPA no Pages).
 
-## GitHub Pages
+## Deploy pela CLI (`npm run deploy`)
+
+Publica o conteúdo de `dist/` na branch **`gh-pages`** do remoto **`origin`** (pacote [gh-pages](https://github.com/tschaub/gh-pages)). Exige repositório Git com `origin` apontando para o GitHub.
+
+Para o site em **`https://<usuario>.github.io/<repositorio>/`**, o build precisa do mesmo caminho:
+
+```bash
+BASE_PATH=/nome-exato-do-repositorio/ npm run deploy
+```
+
+(O token Mapbox continua vindo do `.env` como `VITE_MAPBOX_ACCESS_TOKEN`.)
+
+No GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch** → branch **`gh-pages`**, pasta **`/(root)`**.
+
+> Se você usar **somente** GitHub Actions (workflow deste repo), não precisa de `npm run deploy`; use um **ou** o outro como fonte em Pages, não os dois ao mesmo tempo.
+
+## GitHub Pages (GitHub Actions)
 
 1. No GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions** (não “Deploy from a branch”).
 
