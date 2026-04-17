@@ -24,6 +24,8 @@ export function isLikelyInvalidMapboxToken(token: string): boolean {
   const t = token.trim()
   if (!t) return true
   if (t.includes('PLACEHOLDER')) return true
+  /** Secret token must never be used in the browser bundle. */
+  if (t.startsWith('sk.')) return true
   if (!t.startsWith('pk.')) return true
   return false
 }

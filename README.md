@@ -2,59 +2,48 @@
 
 Interface React + Vite + Mapbox para visualização e roteamento sobre a malha portuária.
 
+**Repositório:** [github.com/Luizgsch/MapaDeRotas](https://github.com/Luizgsch/MapaDeRotas)  
+**GitHub Pages:** [luizgsch.github.io/MapaDeRotas](https://luizgsch.github.io/MapaDeRotas/)
+
 ## Desenvolvimento local
 
-1. Copie `.env.example` para `.env` e preencha o token, ou crie `.env` com:
-
-   `VITE_MAPBOX_ACCESS_TOKEN=pk.seu_token_mapbox`
+1. Copie `.env.example` para `.env` e preencha com um token **público** Mapbox (`pk.…`), **nunca** o token secreto (`sk.…`). O `sk.` não pode ir no JavaScript do navegador e o GitHub [bloqueia o push](https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push) se aparecer no bundle.
 
 2. `npm install` e `npm run dev`.
 
 ## Build
 
-- **Raiz do site (`/`)** — desenvolvimento e hospedagem na raiz de um domínio:
+- **Raiz do site (`/`)** — `npm run build`
 
-  `npm run build`
+- **Este repositório no Pages** — caminho fixo do site:
 
-- **Subpasta (GitHub Pages em repositório)** — use o mesmo caminho do repositório, com barras:
+  `BASE_PATH=/MapaDeRotas/ npm run build`
 
-  `BASE_PATH=/nome-exato-do-repositorio/ npm run build`
-
-O script pós-build gera `dist/404.html` a partir de `index.html` (comportamento SPA no Pages).
+O script pós-build gera `dist/404.html` a partir de `index.html` (SPA no Pages).
 
 ## Deploy pela CLI (`npm run deploy`)
 
-Publica o conteúdo de `dist/` na branch **`gh-pages`** do remoto **`origin`** (pacote [gh-pages](https://github.com/tschaub/gh-pages)). Exige repositório Git com `origin` apontando para o GitHub.
-
-Para o site em **`https://<usuario>.github.io/<repositorio>/`**, o build precisa do mesmo caminho:
+Publica `dist/` na branch **`gh-pages`** do `origin` ([gh-pages](https://github.com/tschaub/gh-pages)). O script já usa **`BASE_PATH=/MapaDeRotas/`** e exige Git com `origin` → `https://github.com/Luizgsch/MapaDeRotas.git`.
 
 ```bash
-BASE_PATH=/nome-exato-do-repositorio/ npm run deploy
+npm run deploy
 ```
 
-(O token Mapbox continua vindo do `.env` como `VITE_MAPBOX_ACCESS_TOKEN`.)
+No GitHub: **Settings → Pages → Source: Deploy from a branch** → **`gh-pages`** / **`/(root)`**.
 
-No GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch** → branch **`gh-pages`**, pasta **`/(root)`**.
-
-> Se você usar **somente** GitHub Actions (workflow deste repo), não precisa de `npm run deploy`; use um **ou** o outro como fonte em Pages, não os dois ao mesmo tempo.
+> Se usar **somente** GitHub Actions, não precisa de `npm run deploy`; escolha **uma** fonte em Pages.
 
 ## GitHub Pages (GitHub Actions)
 
-1. No GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions** (não “Deploy from a branch”).
+1. **Settings → Pages → Source: GitHub Actions**
 
-2. Opcional: **Settings → Secrets and variables → Actions → New repository secret**  
-   Nome: `VITE_MAPBOX_ACCESS_TOKEN`  
-   Valor: token público `pk.…` do Mapbox (sem ele o build passa, mas o mapa não carrega tiles).
+2. Secret opcional `VITE_MAPBOX_ACCESS_TOKEN` com token **`pk.`** (público).
 
-3. Faça push na branch `main` ou `master` (ou rode o workflow manualmente em **Actions**). O workflow em `.github/workflows/deploy-pages.yml` define `BASE_PATH` como `/<nome-do-repo>/` automaticamente.
-
-4. Após o primeiro deploy, o site fica em `https://<usuario>.github.io/<repositorio>/`.
-
-**Site em usuário/organização** (`usuario.github.io` com repositório raiz): use `BASE_PATH=/` no build (ajuste o workflow se for esse caso).
+3. Push em `main` / `master` ou rode o workflow em **Actions**. O `BASE_PATH` vira `/MapaDeRotas/` pelo nome do repositório.
 
 ## Variáveis de ambiente
 
 | Variável | Onde |
 |----------|------|
-| `VITE_MAPBOX_ACCESS_TOKEN` | `.env` local; secret no GitHub Actions para produção |
-| `BASE_PATH` | CI ou linha de comando no build com subpasta (ex.: Pages) |
+| `VITE_MAPBOX_ACCESS_TOKEN` | Só **`pk.`** no `.env` local ou no secret do Actions |
+| `BASE_PATH` | CI; local com subpasta; o `npm run deploy` já define para este repo |
