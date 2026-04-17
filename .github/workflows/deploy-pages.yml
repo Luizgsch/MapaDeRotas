@@ -1,0 +1,59 @@
+# Build e publicação no GitHub Pages (fonte: GitHub Actions).
+# Requisitos no repositório: Settings → Pages → Build and deployment → Source: GitHub Actions.
+# Opcional: Settings → Secrets → Actions → VITE_MAPBOX_ACCESS_TOKEN (token pk. público) para o mapa carregar em produção.
+
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # Caminho do site em Pages tipo projeto: https://<user>.github.io/<nome-do-repo>/
+          BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_MAPBOX_ACCESS_TOKEN: ${{ secrets.VITE_MAPBOX_ACCESS_TOKEN }}
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Enviar artefato
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4

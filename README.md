@@ -1,66 +1,44 @@
-# React + TypeScript + Vite
+# Vale — mapa operacional (Ponta da Madeira)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface React + Vite + Mapbox para visualização e roteamento sobre a malha portuária.
 
-Currently, two official plugins are available:
+## Desenvolvimento local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Copie `.env.example` para `.env` e preencha o token, ou crie `.env` com:
 
-## Expanding the ESLint configuration
+   `VITE_MAPBOX_ACCESS_TOKEN=pk.seu_token_mapbox`
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+2. `npm install` e `npm run dev`.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Build
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Raiz do site (`/`)** — desenvolvimento e hospedagem na raiz de um domínio:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+  `npm run build`
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Subpasta (GitHub Pages em repositório)** — use o mesmo caminho do repositório, com barras:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+  `BASE_PATH=/nome-exato-do-repositorio/ npm run build`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-])
-```
+O script pós-build gera `dist/404.html` a partir de `index.html` (comportamento SPA no Pages).
+
+## GitHub Pages
+
+1. No GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions** (não “Deploy from a branch”).
+
+2. Opcional: **Settings → Secrets and variables → Actions → New repository secret**  
+   Nome: `VITE_MAPBOX_ACCESS_TOKEN`  
+   Valor: token público `pk.…` do Mapbox (sem ele o build passa, mas o mapa não carrega tiles).
+
+3. Faça push na branch `main` ou `master` (ou rode o workflow manualmente em **Actions**). O workflow em `.github/workflows/deploy-pages.yml` define `BASE_PATH` como `/<nome-do-repo>/` automaticamente.
+
+4. Após o primeiro deploy, o site fica em `https://<usuario>.github.io/<repositorio>/`.
+
+**Site em usuário/organização** (`usuario.github.io` com repositório raiz): use `BASE_PATH=/` no build (ajuste o workflow se for esse caso).
+
+## Variáveis de ambiente
+
+| Variável | Onde |
+|----------|------|
+| `VITE_MAPBOX_ACCESS_TOKEN` | `.env` local; secret no GitHub Actions para produção |
+| `BASE_PATH` | CI ou linha de comando no build com subpasta (ex.: Pages) |
