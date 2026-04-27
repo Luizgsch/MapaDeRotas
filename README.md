@@ -3,7 +3,6 @@
 Interface React + Vite + Mapbox para visualização e roteamento sobre a malha portuária.
 
 **Repositório:** [github.com/Luizgsch/MapaDeRotas](https://github.com/Luizgsch/MapaDeRotas)  
-**GitHub Pages:** [luizgsch.github.io/MapaDeRotas](https://luizgsch.github.io/MapaDeRotas/)
 
 ## Desenvolvimento local
 
